@@ -3,10 +3,21 @@ name = "vestargo"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "vestargo"
+path = "src/main.rs"
+
+[[bin]]
+name = "vestargo-simulator"
+path = "src/simulator.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.75"
 reqwest = "0.11.22"
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.104"
 serde_repr = { version = "0.1.16", features = [] }
+rocket = "0.5.0-rc.3"
+tokio = "1.32.0"

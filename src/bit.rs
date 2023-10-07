@@ -1,9 +1,9 @@
 use std::fmt::{Debug, Display, Formatter};
-use std::ptr::write;
+
 use serde::{Deserialize, Deserializer, Serialize};
 use serde::ser::SerializeSeq;
-use serde_json::Result;
 use serde_repr::*;
+use anyhow::Result;
 
 #[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy)]
 #[repr(u8)]
@@ -15,7 +15,7 @@ pub enum Color {
     Blue = 67,
     Violet = 68,
     White = 69,
-    Black = 70
+    Black = 70,
 }
 
 impl From<u8> for Color {
@@ -29,7 +29,7 @@ impl From<u8> for Color {
             68 => Color::Violet,
             69 => Color::White,
             70 => Color::Black,
-            _ => Color::Black
+            _ => Color::Black,
         }
     }
 }
@@ -92,7 +92,7 @@ pub enum Letter {
     Period = 56,
     Slash = 59,
     Question = 60,
-    Degree = 62
+    Degree = 62,
 }
 
 impl From<u8> for Letter {
@@ -154,7 +154,7 @@ impl From<u8> for Letter {
             59 => Letter::Slash,
             60 => Letter::Question,
             62 => Letter::Degree,
-            _ => Letter::Question
+            _ => Letter::Question,
         }
     }
 }
@@ -164,8 +164,8 @@ pub enum Bit {
     Letter(Letter),
     Color(Color),
     Blank,
-    Filed
-} 
+    Filed,
+}
 
 pub trait Code {
     fn get_code(&self) -> u8;
@@ -229,7 +229,7 @@ impl Display for Letter {
             Letter::Period => ".",
             Letter::Slash => "/",
             Letter::Question => "?",
-            Letter::Degree => "°"
+            Letter::Degree => "°",
         };
         write!(f, " {} ", string)
     }
@@ -293,9 +293,9 @@ impl Code for Letter {
             Letter::Period => 56,
             Letter::Slash => 59,
             Letter::Question => 60,
-            Letter::Degree => 62
+            Letter::Degree => 62,
         }
-    }   
+    }
 }
 
 impl Display for Color {
@@ -308,7 +308,7 @@ impl Display for Color {
             Color::Blue => "\x1b[44m   \x1b[0m",
             Color::Violet => "\x1b[45m   \x1b[0m",
             Color::White => "\x1b[107m   \x1b[0m",
-            Color::Black => "\x1b[40m   \x1b[0m"
+            Color::Black => "\x1b[40m   \x1b[0m",
         };
         write!(f, "{}", string)
     }
@@ -324,19 +324,23 @@ impl Code for Color {
             Color::Blue => 67,
             Color::Violet => 68,
             Color::White => 69,
-            Color::Black => 70
+            Color::Black => 70,
         }
     }
 }
 
 impl Display for Bit {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        return match self {
-            Bit::Letter(L) => {Display::fmt(&L, f)}
-            Bit::Color(C) => {Display::fmt(&C, f)}
-            Bit::Blank => {write!(f, "{}", "   ")}
-            Bit::Filed => {write!(f, "{}", "\x1b[107m   \x1b[0m")}
-        };
+        match self {
+            Bit::Letter(l) => Display::fmt(&l, f),
+            Bit::Color(c) => Display::fmt(&c, f),
+            Bit::Blank => {
+                write!(f, "   ")
+            }
+            Bit::Filed => {
+                write!(f, "\x1b[107m   \x1b[0m")
+            }
+        }
     }
 }
 
@@ -346,7 +350,7 @@ impl Code for Bit {
             Bit::Letter(letter) => letter.get_code(),
             Bit::Color(color) => color.get_code(),
             Bit::Blank => 0,
-            Bit::Filed => 71
+            Bit::Filed => 71,
         }
     }
 }
@@ -357,18 +361,21 @@ impl From<u8> for Bit {
             0 => Bit::Blank,
             63..=70 => Bit::Color(Color::from(value)),
             71 => Bit::Filed,
-            _ => Bit::Letter(Letter::from(value))
+            _ => Bit::Letter(Letter::from(value)),
         }
     }
 }
 
 #[derive(Clone)]
-struct Row {
-    pub bits: Vec<Bit>
+pub struct Row {
+    pub bits: Vec<Bit>,
 }
 
 impl Serialize for Row {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> where S: serde::Serializer {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
         let mut seq = serializer.serialize_seq(Some(self.bits.len()))?;
         for bit in &self.bits {
             seq.serialize_element(&bit.get_code())?;
@@ -378,7 +385,10 @@ impl Serialize for Row {
 }
 
 impl<'de> Deserialize<'de> for Row {
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error> where D: Deserializer<'de> {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
         let bits = Vec::<u8>::deserialize(deserializer)?;
         let mut vec = Vec::with_capacity(bits.len());
         for bit in bits {
@@ -386,53 +396,53 @@ impl<'de> Deserialize<'de> for Row {
                 vec.push(Bit::Blank);
             } else if bit == 71 {
                 vec.push(Bit::Filed);
-            } else if bit < 63 {
-                vec.push(bit.into());
             } else {
                 vec.push(bit.into());
             }
         }
-        Ok(Row {
-            bits: vec
-        })
+        Ok(Row { bits: vec })
     }
 }
 
 impl Row {
     pub fn new() -> Row {
         Row {
-            bits: vec![Bit::Blank; 22]
+            bits: vec![Bit::Blank; 22],
         }
     }
 
-    pub fn new_filled(bit : &Bit) -> Row {
+    pub fn new_filled(bit: &Bit) -> Row {
         Row {
-            bits: vec![*bit; 22]
+            bits: vec![*bit; 22],
         }
     }
 }
 
 #[derive(Clone)]
-struct Message {
-    pub rows: Vec<Row>
+pub struct Message {
+    pub rows: Vec<Row>,
 }
 
 impl Serialize for Message {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> where S: serde::Serializer {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
         let mut seq = serializer.serialize_seq(Some(self.rows.len()))?;
         for row in &self.rows {
-                seq.serialize_element(row)?;
+            seq.serialize_element(row)?;
         }
         seq.end()
     }
 }
 
 impl<'de> Deserialize<'de> for Message {
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error> where D: Deserializer<'de> {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
         let rows = Vec::<Row>::deserialize(deserializer)?;
-        Ok(Message {
-            rows
-        })
+        Ok(Message { rows })
     }
 }
 
@@ -443,7 +453,7 @@ impl Debug for Message {
             for bit in &row.bits {
                 string.push_str(&format!("{:02} ", bit.get_code()));
             }
-            string.push_str("\n");
+            string.push('\n');
         }
         write!(f, "{}", string)
     }
@@ -455,7 +465,7 @@ impl Display for Message {
         for _ in 0..22 {
             write!(f, "━━━━")?;
         }
-        write!(f, "\n")?;
+        writeln!(f)?;
         for row in &self.rows {
             write!(f, "┃")?;
             for bit in &row.bits {
@@ -463,14 +473,15 @@ impl Display for Message {
                 write!(f, " ")?;
             }
             write!(f, "┃")?;
-            write!(f, "\n")?;
-            write!(f, "\n")?;
+            writeln!(f)?;
+            write!(f, "┃")?;
+            writeln!(f)?;
         }
         write!(f, " ")?;
         for _ in 0..22 {
             write!(f, "━━━━")?;
         }
-        write!(f, "\n")?;
+        writeln!(f)?;
         Ok(())
     }
 }
@@ -478,29 +489,26 @@ impl Display for Message {
 impl Message {
     pub fn new() -> Message {
         let mut vec = Vec::with_capacity(6);
-        for i in 0..6 {
+        for _i in 0..6 {
             vec.push(Row::new());
         }
-        Message {
-            rows: vec
-        }
+        Message { rows: vec }
     }
 
-    pub fn new_filled(bit : Bit) -> Message {
+    pub fn new_filled(bit: Bit) -> Message {
         let mut vec = Vec::with_capacity(6);
-        for i in 0..6 {
+        for _i in 0..6 {
             vec.push(Row::new_filled(&bit));
         }
-        Message {
-            rows: vec
-        }
+        Message { rows: vec }
     }
 }
 
-// Test 
+// Test
 #[cfg(test)]
 mod tests {
     use crate::bit::*;
+
     #[test]
     fn test_bit_get_code() {
         assert_eq!(Bit::Blank.get_code(), 0);
@@ -677,8 +685,8 @@ mod tests {
         assert_eq!(json, "[[1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[71,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,67,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]");
 
         message.rows[5].bits[19] = Bit::Letter(Letter::Hyphen);
-        message.rows[5].bits[20] = Bit::Letter(Letter::Equal);;
-        message.rows[5].bits[21] = Bit::Letter(Letter::Exclamation);;
+        message.rows[5].bits[20] = Bit::Letter(Letter::Equal);
+        message.rows[5].bits[21] = Bit::Letter(Letter::Exclamation);
 
         let json = serde_json::to_string(&message)?;
         assert_eq!(json, "[[1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[71,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,67,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,44,48,37]]");
@@ -695,7 +703,6 @@ mod tests {
 
     #[test]
     fn test_message_deser() -> Result<()> {
-
         let data = r#"
         [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -721,11 +728,9 @@ mod tests {
         assert_eq!(message.rows[2].bits[14], Bit::Letter(Letter::L));
         assert_eq!(message.rows[2].bits[15], Bit::Letter(Letter::D));
 
-
         println!("{:?}", message);
         println!("{}", message);
 
         Ok(())
     }
-
 }
