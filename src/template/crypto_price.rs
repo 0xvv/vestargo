@@ -25,7 +25,7 @@ impl Template for CryptoPrice {
 
         for (i, ticker) in self.tickers.iter().enumerate() {
             text[i] = format!(
-                "{} ${:>7.1}  {:>6.1}%",
+                "{} ${:>7.1}  {:>+6.1}%",
                 ticker,
                 prices[i],
                 evolution[i] * 100.0
