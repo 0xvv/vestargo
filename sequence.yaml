@@ -1,10 +1,17 @@
 repeat: true
 steps:
-  - template : Rainbow
-    duration : 5
-  - template : Hearts
-    duration : 5
+  - template: Text
+    duration: 5
+    text:
+      -
+      - 'Hello world !'
+      -
+      - 'Bonjour le monde !'
+      -
+      - 'Hallo Welt !'
   - template : Rainbow
     duration : 2
   - template : Hearts
     duration : 2
+
+

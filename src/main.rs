@@ -4,6 +4,7 @@ pub mod template;
 use crate::template::heart::Heart;
 use crate::template::rainbow::Rainbow;
 use crate::template::Template;
+use crate::template::text::Text;
 
 use serde::{Deserialize, Serialize};
 
@@ -16,11 +17,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("{:?}", sequence);
 
+    // No repeat is bugged for now
     while sequence.repeat {
         for step in &sequence.steps {
             let template: Box<dyn Template> = match step.template {
                 Templates::Rainbow => Box::new(Rainbow {}),
                 Templates::Hearts => Box::new(Heart {}),
+                Templates::Text => Box::new(Text::new(step.text.clone().unwrap())),
             };
             let message = template.render();
             let string_message = serde_json::to_string(&message)?;
@@ -45,10 +48,12 @@ struct Sequence {
 struct Step {
     template: Templates,
     duration: u16,
+    text: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 enum Templates {
     Rainbow,
     Hearts,
+    Text,
 }

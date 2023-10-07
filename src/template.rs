@@ -2,6 +2,7 @@ use crate::bit::Message;
 
 pub mod heart;
 pub mod rainbow;
+pub mod text;
 
 // TODO generic template for text
 

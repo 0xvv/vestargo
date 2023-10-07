@@ -1,9 +1,10 @@
 use std::fmt::{Debug, Display, Formatter};
+use std::str::FromStr;
 
-use anyhow::Result;
 use serde::ser::SerializeSeq;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_repr::*;
+use crate::bit;
 
 #[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy)]
 #[repr(u8)]
@@ -155,6 +156,73 @@ impl From<u8> for Letter {
             60 => Letter::Question,
             62 => Letter::Degree,
             _ => Letter::Question,
+        }
+    }
+}
+
+impl FromStr for Bit {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "A" => Ok(Bit::Letter(Letter::A)),
+            "B" => Ok(Bit::Letter(Letter::B)),
+            "C" => Ok(Bit::Letter(Letter::C)),
+            "D" => Ok(Bit::Letter(Letter::D)),
+            "E" => Ok(Bit::Letter(Letter::E)),
+            "F" => Ok(Bit::Letter(Letter::F)),
+            "G" => Ok(Bit::Letter(Letter::G)),
+            "H" => Ok(Bit::Letter(Letter::H)),
+            "I" => Ok(Bit::Letter(Letter::I)),
+            "J" => Ok(Bit::Letter(Letter::J)),
+            "K" => Ok(Bit::Letter(Letter::K)),
+            "L" => Ok(Bit::Letter(Letter::L)),
+            "M" => Ok(Bit::Letter(Letter::M)),
+            "N" => Ok(Bit::Letter(Letter::N)),
+            "O" => Ok(Bit::Letter(Letter::O)),
+            "P" => Ok(Bit::Letter(Letter::P)),
+            "Q" => Ok(Bit::Letter(Letter::Q)),
+            "R" => Ok(Bit::Letter(Letter::R)),
+            "S" => Ok(Bit::Letter(Letter::S)),
+            "T" => Ok(Bit::Letter(Letter::T)),
+            "U" => Ok(Bit::Letter(Letter::U)),
+            "V" => Ok(Bit::Letter(Letter::V)),
+            "W" => Ok(Bit::Letter(Letter::W)),
+            "X" => Ok(Bit::Letter(Letter::X)),
+            "Y" => Ok(Bit::Letter(Letter::Y)),
+            "Z" => Ok(Bit::Letter(Letter::Z)),
+            "1" => Ok(Bit::Letter(Letter::One)),
+            "2" => Ok(Bit::Letter(Letter::Two)),
+            "3" => Ok(Bit::Letter(Letter::Three)),
+            "4" => Ok(Bit::Letter(Letter::Four)),
+            "5" => Ok(Bit::Letter(Letter::Five)),
+            "6" => Ok(Bit::Letter(Letter::Six)),
+            "7" => Ok(Bit::Letter(Letter::Seven)),
+            "8" => Ok(Bit::Letter(Letter::Eight)),
+            "9" => Ok(Bit::Letter(Letter::Nine)),
+            "0" => Ok(Bit::Letter(Letter::Zero)),
+            "!" => Ok(Bit::Letter(Letter::Exclamation)),
+            "@" => Ok(Bit::Letter(Letter::At)),
+            "#" => Ok(Bit::Letter(Letter::Pound)),
+            "$" => Ok(Bit::Letter(Letter::Dollar)),
+            "(" => Ok(Bit::Letter(Letter::LeftParen)),
+            ")" => Ok(Bit::Letter(Letter::RightParen)),
+            "-" => Ok(Bit::Letter(Letter::Hyphen)),
+            "+" => Ok(Bit::Letter(Letter::Plus)),
+            "&" => Ok(Bit::Letter(Letter::Ampersand)),
+            "=" => Ok(Bit::Letter(Letter::Equal)),
+            ";" => Ok(Bit::Letter(Letter::SemiColon)),
+            ":" => Ok(Bit::Letter(Letter::Colon)),
+            "'" => Ok(Bit::Letter(Letter::Quote)),
+            "\"" => Ok(Bit::Letter(Letter::DoubleQuote)),
+            "%" => Ok(Bit::Letter(Letter::Percent)),
+            "," => Ok(Bit::Letter(Letter::Comma)),
+            "." => Ok(Bit::Letter(Letter::Period)),
+            "/" => Ok(Bit::Letter(Letter::Slash)),
+            "?" => Ok(Bit::Letter(Letter::Question)),
+            "°" => Ok(Bit::Letter(Letter::Degree)),
+            " " => Ok(Bit::Blank),
+            _ => Ok(Bit::Letter(Letter::Question)),
         }
     }
 }
