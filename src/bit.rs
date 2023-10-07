@@ -1,9 +1,9 @@
 use std::fmt::{Debug, Display, Formatter};
 
-use serde::{Deserialize, Deserializer, Serialize};
-use serde::ser::SerializeSeq;
-use serde_repr::*;
 use anyhow::Result;
+use serde::ser::SerializeSeq;
+use serde::{Deserialize, Deserializer, Serialize};
+use serde_repr::*;
 
 #[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy)]
 #[repr(u8)]

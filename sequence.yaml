@@ -1,0 +1,10 @@
+repeat: true
+steps:
+  - template : Rainbow
+    duration : 5
+  - template : Hearts
+    duration : 5
+  - template : Rainbow
+    duration : 2
+  - template : Hearts
+    duration : 2

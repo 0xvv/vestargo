@@ -1,5 +1,5 @@
-use crate::template::Template;
 use crate::bit::*;
+use crate::template::Template;
 pub struct Rainbow {}
 
 impl Template for Rainbow {

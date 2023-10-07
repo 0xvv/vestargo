@@ -1,5 +1,5 @@
-use crate::template::Template;
 use crate::bit::*;
+use crate::template::Template;
 pub struct Heart {}
 
 impl Template for Heart {
@@ -34,7 +34,6 @@ impl Template for Heart {
         message.rows[4].bits[5] = Bit::Color(Color::Red);
 
         message.rows[5].bits[4] = Bit::Color(Color::Red);
-
 
         message.rows[0].bits[15] = Bit::Color(Color::Red);
         message.rows[0].bits[19] = Bit::Color(Color::Red);

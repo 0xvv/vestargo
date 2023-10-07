@@ -1,37 +1,54 @@
 pub mod bit;
 pub mod template;
 
-use crate::template::Template;
-use crate::template::rainbow::Rainbow;
 use crate::template::heart::Heart;
+use crate::template::rainbow::Rainbow;
+use crate::template::Template;
+
+use serde::{Deserialize, Serialize};
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
 
-    loop {
-        let template = Heart{};
-        let message = template.render();
-        let string_message = serde_json::to_string(&message)?;
-        let address = "http://127.0.01:8000/".to_string() + &string_message;
+    let yaml = std::fs::read_to_string("sequence.yaml")?;
+    let sequence: Sequence = serde_yaml::from_str(&*yaml).unwrap();
 
-        let _resp = client.post(&address)
-            .send()
-            .await?;
+    println!("{:?}", sequence);
 
-        // wait 1 s
-        tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+    while sequence.repeat {
+        for step in &sequence.steps {
+            let template: Box<dyn Template> = match step.template {
+                Templates::Rainbow => Box::new(Rainbow {}),
+                Templates::Hearts => Box::new(Heart {}),
+            };
+            let message = template.render();
+            let string_message = serde_json::to_string(&message)?;
+            let address = "http://127.0.01:8000/".to_string() + &string_message;
 
-        let template = Rainbow{};
-        let message = template.render();
-        let string_message = serde_json::to_string(&message)?;
-        let address = "http://127.0.01:8000/".to_string() + &string_message;
+            let _resp = client.post(&address).send().await?;
 
-        let _resp = client.post(&address)
-            .send()
-            .await?;
-
-        // wait 1 s
-        tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(step.duration.into())).await;
+        }
     }
+
     Ok(())
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Sequence {
+    repeat: bool,
+    steps: Vec<Step>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Step {
+    template: Templates,
+    duration: u16,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+enum Templates {
+    Rainbow,
+    Hearts,
 }
