@@ -1,6 +1,6 @@
-use std::str::FromStr;
 use crate::bit::*;
 use crate::template::Template;
+
 pub struct Text {
     pub text: Vec<String>,
 }
@@ -13,21 +13,12 @@ impl Text {
                 line.truncate(22);
             }
         }
-        Text {
-            text
-        }
+        Text { text }
     }
 }
 
 impl Template for Text {
     fn render(&self) -> Message {
-        let mut message = Message::new();
-        for (i, mut line) in self.text.iter().enumerate() {
-            for (j, c) in line.chars().enumerate() {
-                message.rows[i].bits[j] = Bit::from_str(&c.to_string()).unwrap()
-            }
-        }
-
-        message
+        Message::from_text(&self.text)
     }
 }

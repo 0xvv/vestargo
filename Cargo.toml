@@ -22,3 +22,4 @@ serde_repr = { version = "0.1.16", features = [] }
 rocket = "0.5.0-rc.3"
 tokio = "1.32.0"
 serde_yaml = "0.9.25"
+futures = { version = "0.3.28", features = [] }

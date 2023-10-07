@@ -1,5 +1,12 @@
 repeat: true
 steps:
+  - template: Crypto
+    duration: 5
+    tickers:
+      - Btc
+      - Eth
+      #- Bnb
+      #- Sol
   - template: Text
     duration: 5
     text:

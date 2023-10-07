@@ -4,7 +4,6 @@ use std::str::FromStr;
 use serde::ser::SerializeSeq;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_repr::*;
-use crate::bit;
 
 #[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy)]
 #[repr(u8)]
@@ -440,7 +439,7 @@ pub struct Row {
 }
 
 impl Serialize for Row {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
@@ -453,7 +452,7 @@ impl Serialize for Row {
 }
 
 impl<'de> Deserialize<'de> for Row {
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -472,13 +471,15 @@ impl<'de> Deserialize<'de> for Row {
     }
 }
 
-impl Row {
-    pub fn new() -> Row {
+impl Default for Row {
+    fn default() -> Row {
         Row {
             bits: vec![Bit::Blank; 22],
         }
     }
+}
 
+impl Row {
     pub fn new_filled(bit: &Bit) -> Row {
         Row {
             bits: vec![*bit; 22],
@@ -491,8 +492,20 @@ pub struct Message {
     pub rows: Vec<Row>,
 }
 
+impl Message {
+    pub(crate) fn from_text(text: &[String]) -> Message {
+        let mut message = Message::default();
+        for (i, line) in text.iter().enumerate() {
+            for (j, c) in line.chars().enumerate() {
+                message.rows[i].bits[j] = Bit::from_str(&c.to_string()).unwrap()
+            }
+        }
+        message
+    }
+}
+
 impl Serialize for Message {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
@@ -505,7 +518,7 @@ impl Serialize for Message {
 }
 
 impl<'de> Deserialize<'de> for Message {
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -515,7 +528,7 @@ impl<'de> Deserialize<'de> for Message {
 }
 
 impl Debug for Message {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut string = String::new();
         for row in &self.rows {
             for bit in &row.bits {
@@ -528,7 +541,7 @@ impl Debug for Message {
 }
 
 impl Display for Message {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, " ")?;
         for _ in 0..22 {
             write!(f, "━━━━")?;
@@ -554,15 +567,17 @@ impl Display for Message {
     }
 }
 
-impl Message {
-    pub fn new() -> Message {
+impl Default for Message {
+    fn default() -> Message {
         let mut vec = Vec::with_capacity(6);
         for _i in 0..6 {
-            vec.push(Row::new());
+            vec.push(Row::default());
         }
         Message { rows: vec }
     }
+}
 
+impl Message {
     pub fn new_filled(bit: Bit) -> Message {
         let mut vec = Vec::with_capacity(6);
         for _i in 0..6 {
@@ -649,7 +664,7 @@ mod tests {
 
     #[test]
     fn test_message_crafting() {
-        let mut message = Message::new();
+        let mut message = Message::default();
         message.rows[0].bits[0] = Bit::Letter(Letter::A);
         message.rows[0].bits[1] = Bit::Letter(Letter::B);
         message.rows[0].bits[2] = Bit::Letter(Letter::C);
