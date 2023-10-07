@@ -34,11 +34,27 @@ impl Template for CryptoPrice {
         let mut message = Message::from_text(&text);
 
         for (i, e) in evolution.iter().enumerate() {
-            if *e < 0.0 {
-                message.rows[i].bits[15] = Bit::Color(Color::Red);
+            if *e <= -0.0001 {
+                if *e <= -0.1 {
+                    if *e <= -1.0 {
+                        message.rows[i].bits[13] = Bit::Color(Color::Red);
+                    } else {
+                        message.rows[i].bits[14] = Bit::Color(Color::Red);
+                    }
+                } else {
+                    message.rows[i].bits[15] = Bit::Color(Color::Red);
+                }
                 message.rows[i].bits[21] = Bit::Color(Color::Red);
-            } else {
-                message.rows[i].bits[15] = Bit::Color(Color::Green);
+            } else if *e >= 0.0001 {
+                if *e >= 0.1 {
+                    if *e >= 1.0 {
+                        message.rows[i].bits[13] = Bit::Color(Color::Green);
+                    } else {
+                        message.rows[i].bits[14] = Bit::Color(Color::Green);
+                    }
+                } else {
+                    message.rows[i].bits[15] = Bit::Color(Color::Green);
+                }
                 message.rows[i].bits[21] = Bit::Color(Color::Green);
             }
         }
