@@ -28,6 +28,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Templates::Hearts => Box::new(Heart {}),
                 Templates::Text => Box::new(Text::new(step.text.clone().unwrap())),
                 Templates::Crypto => Box::new(CryptoPrice::new(step.tickers.clone().unwrap())),
+                Templates::HappyText => Box::new(crate::template::happy_text::HappyText::new(
+                    step.text.clone().unwrap(),
+                )),
             };
             let message = template.render();
             let string_message = serde_json::to_string(&message)?;
@@ -62,6 +65,7 @@ enum Templates {
     Hearts,
     Text,
     Crypto,
+    HappyText,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

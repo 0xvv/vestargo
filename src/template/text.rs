@@ -7,6 +7,9 @@ pub struct Text {
 
 impl Text {
     pub fn new(mut text: Vec<String>) -> Text {
+        while text.len() > 6 {
+            text.pop();
+        }
         for line in &mut text {
             line.make_ascii_uppercase();
             *line = line.chars().take(22).collect();

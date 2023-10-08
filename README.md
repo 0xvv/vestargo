@@ -2,7 +2,7 @@
 
 ## Description
 
-Minimal control software for the Vestargo display.
+Minimal control software for the Vestaboard display.
 
 Also contains a minimal board simulator to test your sequence
 
@@ -47,6 +47,21 @@ Colors are represented by the following characters:
     - 'Bonjour le monde !'
     -
     - '█🟥🟧🟨🟩🟦🟪◽⬛█🟥🟧🟨🟩🟦🟪◽⬛'
+```
+
+### HappyText
+
+![HappyText](./screens/happy_text.png)
+
+Displays given text surrounded by random colors, up to 4 lines of 20 characters.
+
+```yaml
+- template: HappyText
+  duration: 5
+  text:
+    - 'Hello world !'
+    -
+    - 'Bonjour le monde !'
 ```
 
 ### Crypto

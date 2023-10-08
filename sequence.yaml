@@ -1,5 +1,13 @@
 repeat: true
 steps:
+  - template: HappyText
+    duration: 5
+    text:
+      - 'Hello world !'
+      -
+      - 'Bonjour le monde !'
+      -
+      - '█🟥🟧🟨🟩🟦🟪◽⬛█🟥🟧🟨🟩🟦🟪◽⬛' # auto truncate extra line
   - template: Crypto
     duration: 5
     tickers:
@@ -15,7 +23,7 @@ steps:
       -
       - 'Bonjour le monde !'
       -
-      - '█🟥🟧🟨🟩🟦🟪◽⬛█🟥🟧🟨🟩🟦🟪◽⬛'
+      - '█🟥🟧🟨🟩🟦🟪◽⬛█🟥🟧🟨🟩🟦🟪◽⬛█🟥🟧🟨🟩🟦🟪◽⬛' # auto truncating after 22 chars
   - template : Rainbow
     duration : 2
   - template : Hearts
