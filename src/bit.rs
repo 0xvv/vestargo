@@ -221,6 +221,15 @@ impl FromStr for Bit {
             "?" => Ok(Bit::Letter(Letter::Question)),
             "°" => Ok(Bit::Letter(Letter::Degree)),
             " " => Ok(Bit::Blank),
+            "█" => Ok(Bit::Filed),
+            "🟥" => Ok(Bit::Color(Color::Red)),
+            "🟧" => Ok(Bit::Color(Color::Orange)),
+            "🟨" => Ok(Bit::Color(Color::Yellow)),
+            "🟩" => Ok(Bit::Color(Color::Green)),
+            "🟦" => Ok(Bit::Color(Color::Blue)),
+            "🟪" => Ok(Bit::Color(Color::Violet)),
+            "◽" => Ok(Bit::Color(Color::White)),
+            "⬛" => Ok(Bit::Color(Color::Black)),
             _ => Ok(Bit::Letter(Letter::Question)),
         }
     }
@@ -590,6 +599,7 @@ impl Message {
 // Test
 #[cfg(test)]
 mod tests {
+    use anyhow::Result;
     use crate::bit::*;
 
     #[test]
@@ -748,7 +758,7 @@ mod tests {
 
     #[test]
     fn test_message_ser() -> Result<()> {
-        let mut message = Message::new();
+        let mut message = Message::default();
 
         let json = serde_json::to_string(&message)?;
         assert_eq!(json, "[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]");

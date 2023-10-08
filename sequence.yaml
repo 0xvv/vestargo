@@ -15,7 +15,7 @@ steps:
       -
       - 'Bonjour le monde !'
       -
-      - 'Hallo Welt !'
+      - '█🟥🟧🟨🟩🟦🟪◽⬛█🟥🟧🟨🟩🟦🟪◽⬛'
   - template : Rainbow
     duration : 2
   - template : Hearts

@@ -9,9 +9,8 @@ impl Text {
     pub fn new(mut text: Vec<String>) -> Text {
         for line in &mut text {
             line.make_ascii_uppercase();
-            if line.len() > 22 {
-                line.truncate(22);
-            }
+            *line = line.chars().take(22).collect();
+
         }
         Text { text }
     }
