@@ -1,11 +1,18 @@
+extern crate num;
+extern crate num_derive;
+
 use std::fmt::{Debug, Display, Formatter};
 use std::str::FromStr;
 
+use num_derive::{FromPrimitive, ToPrimitive};
+use num_traits::{FromPrimitive, ToPrimitive};
 use serde::ser::SerializeSeq;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_repr::*;
 
-#[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy)]
+#[derive(
+    Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy, FromPrimitive, ToPrimitive,
+)]
 #[repr(u8)]
 pub enum Color {
     Red = 63,
@@ -18,23 +25,9 @@ pub enum Color {
     Black = 70,
 }
 
-impl From<u8> for Color {
-    fn from(value: u8) -> Self {
-        match value {
-            63 => Color::Red,
-            64 => Color::Orange,
-            65 => Color::Yellow,
-            66 => Color::Green,
-            67 => Color::Blue,
-            68 => Color::Violet,
-            69 => Color::White,
-            70 => Color::Black,
-            _ => Color::Black,
-        }
-    }
-}
-
-#[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy)]
+#[derive(
+    Serialize_repr, Deserialize_repr, Debug, Clone, Eq, PartialEq, Copy, FromPrimitive, ToPrimitive,
+)]
 #[repr(u8)]
 pub enum Letter {
     A = 1,
@@ -93,70 +86,6 @@ pub enum Letter {
     Slash = 59,
     Question = 60,
     Degree = 62,
-}
-
-impl From<u8> for Letter {
-    fn from(value: u8) -> Self {
-        match value {
-            1 => Letter::A,
-            2 => Letter::B,
-            3 => Letter::C,
-            4 => Letter::D,
-            5 => Letter::E,
-            6 => Letter::F,
-            7 => Letter::G,
-            8 => Letter::H,
-            9 => Letter::I,
-            10 => Letter::J,
-            11 => Letter::K,
-            12 => Letter::L,
-            13 => Letter::M,
-            14 => Letter::N,
-            15 => Letter::O,
-            16 => Letter::P,
-            17 => Letter::Q,
-            18 => Letter::R,
-            19 => Letter::S,
-            20 => Letter::T,
-            21 => Letter::U,
-            22 => Letter::V,
-            23 => Letter::W,
-            24 => Letter::X,
-            25 => Letter::Y,
-            26 => Letter::Z,
-            27 => Letter::One,
-            28 => Letter::Two,
-            29 => Letter::Three,
-            30 => Letter::Four,
-            31 => Letter::Five,
-            32 => Letter::Six,
-            33 => Letter::Seven,
-            34 => Letter::Eight,
-            35 => Letter::Nine,
-            36 => Letter::Zero,
-            37 => Letter::Exclamation,
-            38 => Letter::At,
-            39 => Letter::Pound,
-            40 => Letter::Dollar,
-            41 => Letter::LeftParen,
-            42 => Letter::RightParen,
-            44 => Letter::Hyphen,
-            46 => Letter::Plus,
-            47 => Letter::Ampersand,
-            48 => Letter::Equal,
-            49 => Letter::SemiColon,
-            50 => Letter::Colon,
-            52 => Letter::Quote,
-            53 => Letter::DoubleQuote,
-            54 => Letter::Percent,
-            55 => Letter::Comma,
-            56 => Letter::Period,
-            59 => Letter::Slash,
-            60 => Letter::Question,
-            62 => Letter::Degree,
-            _ => Letter::Question,
-        }
-    }
 }
 
 impl FromStr for Bit {
@@ -243,10 +172,6 @@ pub enum Bit {
     Filed,
 }
 
-pub trait Code {
-    fn get_code(&self) -> u8;
-}
-
 impl Display for Letter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let string = match self {
@@ -311,69 +236,6 @@ impl Display for Letter {
     }
 }
 
-impl Code for Letter {
-    fn get_code(&self) -> u8 {
-        match self {
-            Letter::A => 1,
-            Letter::B => 2,
-            Letter::C => 3,
-            Letter::D => 4,
-            Letter::E => 5,
-            Letter::F => 6,
-            Letter::G => 7,
-            Letter::H => 8,
-            Letter::I => 9,
-            Letter::J => 10,
-            Letter::K => 11,
-            Letter::L => 12,
-            Letter::M => 13,
-            Letter::N => 14,
-            Letter::O => 15,
-            Letter::P => 16,
-            Letter::Q => 17,
-            Letter::R => 18,
-            Letter::S => 19,
-            Letter::T => 20,
-            Letter::U => 21,
-            Letter::V => 22,
-            Letter::W => 23,
-            Letter::X => 24,
-            Letter::Y => 25,
-            Letter::Z => 26,
-            Letter::One => 27,
-            Letter::Two => 28,
-            Letter::Three => 29,
-            Letter::Four => 30,
-            Letter::Five => 31,
-            Letter::Six => 32,
-            Letter::Seven => 33,
-            Letter::Eight => 34,
-            Letter::Nine => 35,
-            Letter::Zero => 36,
-            Letter::Exclamation => 37,
-            Letter::At => 38,
-            Letter::Pound => 39,
-            Letter::Dollar => 40,
-            Letter::LeftParen => 41,
-            Letter::RightParen => 42,
-            Letter::Hyphen => 44,
-            Letter::Plus => 46,
-            Letter::Ampersand => 47,
-            Letter::Equal => 48,
-            Letter::SemiColon => 49,
-            Letter::Colon => 50,
-            Letter::Quote => 52,
-            Letter::DoubleQuote => 53,
-            Letter::Percent => 54,
-            Letter::Comma => 55,
-            Letter::Period => 56,
-            Letter::Slash => 59,
-            Letter::Question => 60,
-            Letter::Degree => 62,
-        }
-    }
-}
-
 impl Display for Color {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let string = match self {
@@ -387,21 +249,6 @@ impl Display for Color {
             Color::Black => "\x1b[40m   \x1b[0m",
         };
         write!(f, "{}", string)
-    }
-}
-
-impl Code for Color {
-    fn get_code(&self) -> u8 {
-        match self {
-            Color::Red => 63,
-            Color::Orange => 64,
-            Color::Yellow => 65,
-            Color::Green => 66,
-            Color::Blue => 67,
-            Color::Violet => 68,
-            Color::White => 69,
-            Color::Black => 70,
-        }
     }
 }
 
@@ -420,14 +267,22 @@ impl Display for Bit {
     }
 }
 
-impl Code for Bit {
-    fn get_code(&self) -> u8 {
+impl ToPrimitive for Bit {
+    fn to_i64(&self) -> Option<i64> {
+        Some(self.to_u8().unwrap() as i64)
+    }
+
+    fn to_u8(&self) -> Option<u8> {
         match self {
-            Bit::Letter(letter) => letter.get_code(),
-            Bit::Color(color) => color.get_code(),
-            Bit::Blank => 0,
-            Bit::Filed => 71,
+            Bit::Letter(letter) => letter.to_u8(),
+            Bit::Color(color) => color.to_u8(),
+            Bit::Blank => Some(0),
+            Bit::Filed => Some(71),
         }
+    }
+
+    fn to_u64(&self) -> Option<u64> {
+        Some(self.to_u8().unwrap() as u64)
     }
 }
 
@@ -435,9 +290,9 @@ impl From<u8> for Bit {
     fn from(value: u8) -> Self {
         match value {
             0 => Bit::Blank,
-            63..=70 => Bit::Color(Color::from(value)),
+            63..=70 => Bit::Color(Color::from_u8(value).unwrap()),
             71 => Bit::Filed,
-            _ => Bit::Letter(Letter::from(value)),
+            _ => Bit::Letter(Letter::from_u8(value).unwrap()),
         }
     }
 }
@@ -454,7 +309,7 @@ impl Serialize for Row {
     {
         let mut seq = serializer.serialize_seq(Some(self.bits.len()))?;
         for bit in &self.bits {
-            seq.serialize_element(&bit.get_code())?;
+            seq.serialize_element(&bit.to_u8())?;
         }
         seq.end()
     }
@@ -541,7 +396,7 @@ impl Debug for Message {
         let mut string = String::new();
         for row in &self.rows {
             for bit in &row.bits {
-                string.push_str(&format!("{:02} ", bit.get_code()));
+                string.push_str(&format!("{:02} ", bit.to_u8().unwrap()));
             }
             string.push('\n');
         }
@@ -596,80 +451,79 @@ impl Message {
     }
 }
 
-// Test
 #[cfg(test)]
 mod tests {
-    use anyhow::Result;
     use crate::bit::*;
+    use anyhow::Result;
 
     #[test]
-    fn test_bit_get_code() {
-        assert_eq!(Bit::Blank.get_code(), 0);
-        assert_eq!(Bit::Letter(Letter::A).get_code(), 1);
-        assert_eq!(Bit::Letter(Letter::B).get_code(), 2);
-        assert_eq!(Bit::Letter(Letter::C).get_code(), 3);
-        assert_eq!(Bit::Letter(Letter::D).get_code(), 4);
-        assert_eq!(Bit::Letter(Letter::E).get_code(), 5);
-        assert_eq!(Bit::Letter(Letter::F).get_code(), 6);
-        assert_eq!(Bit::Letter(Letter::G).get_code(), 7);
-        assert_eq!(Bit::Letter(Letter::H).get_code(), 8);
-        assert_eq!(Bit::Letter(Letter::I).get_code(), 9);
-        assert_eq!(Bit::Letter(Letter::J).get_code(), 10);
-        assert_eq!(Bit::Letter(Letter::K).get_code(), 11);
-        assert_eq!(Bit::Letter(Letter::L).get_code(), 12);
-        assert_eq!(Bit::Letter(Letter::M).get_code(), 13);
-        assert_eq!(Bit::Letter(Letter::N).get_code(), 14);
-        assert_eq!(Bit::Letter(Letter::O).get_code(), 15);
-        assert_eq!(Bit::Letter(Letter::P).get_code(), 16);
-        assert_eq!(Bit::Letter(Letter::Q).get_code(), 17);
-        assert_eq!(Bit::Letter(Letter::R).get_code(), 18);
-        assert_eq!(Bit::Letter(Letter::S).get_code(), 19);
-        assert_eq!(Bit::Letter(Letter::T).get_code(), 20);
-        assert_eq!(Bit::Letter(Letter::U).get_code(), 21);
-        assert_eq!(Bit::Letter(Letter::V).get_code(), 22);
-        assert_eq!(Bit::Letter(Letter::W).get_code(), 23);
-        assert_eq!(Bit::Letter(Letter::X).get_code(), 24);
-        assert_eq!(Bit::Letter(Letter::Y).get_code(), 25);
-        assert_eq!(Bit::Letter(Letter::Z).get_code(), 26);
-        assert_eq!(Bit::Letter(Letter::One).get_code(), 27);
-        assert_eq!(Bit::Letter(Letter::Two).get_code(), 28);
-        assert_eq!(Bit::Letter(Letter::Three).get_code(), 29);
-        assert_eq!(Bit::Letter(Letter::Four).get_code(), 30);
-        assert_eq!(Bit::Letter(Letter::Five).get_code(), 31);
-        assert_eq!(Bit::Letter(Letter::Six).get_code(), 32);
-        assert_eq!(Bit::Letter(Letter::Seven).get_code(), 33);
-        assert_eq!(Bit::Letter(Letter::Eight).get_code(), 34);
-        assert_eq!(Bit::Letter(Letter::Nine).get_code(), 35);
-        assert_eq!(Bit::Letter(Letter::Zero).get_code(), 36);
-        assert_eq!(Bit::Letter(Letter::Exclamation).get_code(), 37);
-        assert_eq!(Bit::Letter(Letter::At).get_code(), 38);
-        assert_eq!(Bit::Letter(Letter::Pound).get_code(), 39);
-        assert_eq!(Bit::Letter(Letter::Dollar).get_code(), 40);
-        assert_eq!(Bit::Letter(Letter::LeftParen).get_code(), 41);
-        assert_eq!(Bit::Letter(Letter::RightParen).get_code(), 42);
-        assert_eq!(Bit::Letter(Letter::Hyphen).get_code(), 44);
-        assert_eq!(Bit::Letter(Letter::Plus).get_code(), 46);
-        assert_eq!(Bit::Letter(Letter::Ampersand).get_code(), 47);
-        assert_eq!(Bit::Letter(Letter::Equal).get_code(), 48);
-        assert_eq!(Bit::Letter(Letter::SemiColon).get_code(), 49);
-        assert_eq!(Bit::Letter(Letter::Colon).get_code(), 50);
-        assert_eq!(Bit::Letter(Letter::Quote).get_code(), 52);
-        assert_eq!(Bit::Letter(Letter::DoubleQuote).get_code(), 53);
-        assert_eq!(Bit::Letter(Letter::Percent).get_code(), 54);
-        assert_eq!(Bit::Letter(Letter::Comma).get_code(), 55);
-        assert_eq!(Bit::Letter(Letter::Period).get_code(), 56);
-        assert_eq!(Bit::Letter(Letter::Slash).get_code(), 59);
-        assert_eq!(Bit::Letter(Letter::Question).get_code(), 60);
-        assert_eq!(Bit::Letter(Letter::Degree).get_code(), 62);
-        assert_eq!(Bit::Color(Color::Red).get_code(), 63);
-        assert_eq!(Bit::Color(Color::Orange).get_code(), 64);
-        assert_eq!(Bit::Color(Color::Yellow).get_code(), 65);
-        assert_eq!(Bit::Color(Color::Green).get_code(), 66);
-        assert_eq!(Bit::Color(Color::Blue).get_code(), 67);
-        assert_eq!(Bit::Color(Color::Violet).get_code(), 68);
-        assert_eq!(Bit::Color(Color::White).get_code(), 69);
-        assert_eq!(Bit::Color(Color::Black).get_code(), 70);
-        assert_eq!(Bit::Filed.get_code(), 71);
+    fn test_bit_to_u8() {
+        assert_eq!(Bit::Blank.to_u8().unwrap(), 0);
+        assert_eq!(Bit::Letter(Letter::A).to_u8().unwrap(), 1);
+        assert_eq!(Bit::Letter(Letter::B).to_u8().unwrap(), 2);
+        assert_eq!(Bit::Letter(Letter::C).to_u8().unwrap(), 3);
+        assert_eq!(Bit::Letter(Letter::D).to_u8().unwrap(), 4);
+        assert_eq!(Bit::Letter(Letter::E).to_u8().unwrap(), 5);
+        assert_eq!(Bit::Letter(Letter::F).to_u8().unwrap(), 6);
+        assert_eq!(Bit::Letter(Letter::G).to_u8().unwrap(), 7);
+        assert_eq!(Bit::Letter(Letter::H).to_u8().unwrap(), 8);
+        assert_eq!(Bit::Letter(Letter::I).to_u8().unwrap(), 9);
+        assert_eq!(Bit::Letter(Letter::J).to_u8().unwrap(), 10);
+        assert_eq!(Bit::Letter(Letter::K).to_u8().unwrap(), 11);
+        assert_eq!(Bit::Letter(Letter::L).to_u8().unwrap(), 12);
+        assert_eq!(Bit::Letter(Letter::M).to_u8().unwrap(), 13);
+        assert_eq!(Bit::Letter(Letter::N).to_u8().unwrap(), 14);
+        assert_eq!(Bit::Letter(Letter::O).to_u8().unwrap(), 15);
+        assert_eq!(Bit::Letter(Letter::P).to_u8().unwrap(), 16);
+        assert_eq!(Bit::Letter(Letter::Q).to_u8().unwrap(), 17);
+        assert_eq!(Bit::Letter(Letter::R).to_u8().unwrap(), 18);
+        assert_eq!(Bit::Letter(Letter::S).to_u8().unwrap(), 19);
+        assert_eq!(Bit::Letter(Letter::T).to_u8().unwrap(), 20);
+        assert_eq!(Bit::Letter(Letter::U).to_u8().unwrap(), 21);
+        assert_eq!(Bit::Letter(Letter::V).to_u8().unwrap(), 22);
+        assert_eq!(Bit::Letter(Letter::W).to_u8().unwrap(), 23);
+        assert_eq!(Bit::Letter(Letter::X).to_u8().unwrap(), 24);
+        assert_eq!(Bit::Letter(Letter::Y).to_u8().unwrap(), 25);
+        assert_eq!(Bit::Letter(Letter::Z).to_u8().unwrap(), 26);
+        assert_eq!(Bit::Letter(Letter::One).to_u8().unwrap(), 27);
+        assert_eq!(Bit::Letter(Letter::Two).to_u8().unwrap(), 28);
+        assert_eq!(Bit::Letter(Letter::Three).to_u8().unwrap(), 29);
+        assert_eq!(Bit::Letter(Letter::Four).to_u8().unwrap(), 30);
+        assert_eq!(Bit::Letter(Letter::Five).to_u8().unwrap(), 31);
+        assert_eq!(Bit::Letter(Letter::Six).to_u8().unwrap(), 32);
+        assert_eq!(Bit::Letter(Letter::Seven).to_u8().unwrap(), 33);
+        assert_eq!(Bit::Letter(Letter::Eight).to_u8().unwrap(), 34);
+        assert_eq!(Bit::Letter(Letter::Nine).to_u8().unwrap(), 35);
+        assert_eq!(Bit::Letter(Letter::Zero).to_u8().unwrap(), 36);
+        assert_eq!(Bit::Letter(Letter::Exclamation).to_u8().unwrap(), 37);
+        assert_eq!(Bit::Letter(Letter::At).to_u8().unwrap(), 38);
+        assert_eq!(Bit::Letter(Letter::Pound).to_u8().unwrap(), 39);
+        assert_eq!(Bit::Letter(Letter::Dollar).to_u8().unwrap(), 40);
+        assert_eq!(Bit::Letter(Letter::LeftParen).to_u8().unwrap(), 41);
+        assert_eq!(Bit::Letter(Letter::RightParen).to_u8().unwrap(), 42);
+        assert_eq!(Bit::Letter(Letter::Hyphen).to_u8().unwrap(), 44);
+        assert_eq!(Bit::Letter(Letter::Plus).to_u8().unwrap(), 46);
+        assert_eq!(Bit::Letter(Letter::Ampersand).to_u8().unwrap(), 47);
+        assert_eq!(Bit::Letter(Letter::Equal).to_u8().unwrap(), 48);
+        assert_eq!(Bit::Letter(Letter::SemiColon).to_u8().unwrap(), 49);
+        assert_eq!(Bit::Letter(Letter::Colon).to_u8().unwrap(), 50);
+        assert_eq!(Bit::Letter(Letter::Quote).to_u8().unwrap(), 52);
+        assert_eq!(Bit::Letter(Letter::DoubleQuote).to_u8().unwrap(), 53);
+        assert_eq!(Bit::Letter(Letter::Percent).to_u8().unwrap(), 54);
+        assert_eq!(Bit::Letter(Letter::Comma).to_u8().unwrap(), 55);
+        assert_eq!(Bit::Letter(Letter::Period).to_u8().unwrap(), 56);
+        assert_eq!(Bit::Letter(Letter::Slash).to_u8().unwrap(), 59);
+        assert_eq!(Bit::Letter(Letter::Question).to_u8().unwrap(), 60);
+        assert_eq!(Bit::Letter(Letter::Degree).to_u8().unwrap(), 62);
+        assert_eq!(Bit::Color(Color::Red).to_u8().unwrap(), 63);
+        assert_eq!(Bit::Color(Color::Orange).to_u8().unwrap(), 64);
+        assert_eq!(Bit::Color(Color::Yellow).to_u8().unwrap(), 65);
+        assert_eq!(Bit::Color(Color::Green).to_u8().unwrap(), 66);
+        assert_eq!(Bit::Color(Color::Blue).to_u8().unwrap(), 67);
+        assert_eq!(Bit::Color(Color::Violet).to_u8().unwrap(), 68);
+        assert_eq!(Bit::Color(Color::White).to_u8().unwrap(), 69);
+        assert_eq!(Bit::Color(Color::Black).to_u8().unwrap(), 70);
+        assert_eq!(Bit::Filed.to_u8().unwrap(), 71);
     }
 
     #[test]

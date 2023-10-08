@@ -10,7 +10,6 @@ impl Text {
         for line in &mut text {
             line.make_ascii_uppercase();
             *line = line.chars().take(22).collect();
-
         }
         Text { text }
     }

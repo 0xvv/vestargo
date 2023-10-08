@@ -23,3 +23,6 @@ rocket = "0.5.0-rc.3"
 tokio = "1.32.0"
 serde_yaml = "0.9.25"
 futures = { version = "0.3.28", features = [] }
+num = "0.4.1"
+num-derive = "0.4.1"
+num-traits = "0.2.17"

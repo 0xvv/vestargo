@@ -6,11 +6,6 @@ mod bit;
 use bit::Message;
 use rocket::response::status;
 
-#[get("/")]
-fn hello() -> &'static str {
-    "Hello, world!"
-}
-
 #[post("/<message>")]
 fn show(message: &str) -> status::Accepted<String> {
     let message: Message = serde_json::from_str(message).unwrap();
@@ -20,23 +15,13 @@ fn show(message: &str) -> status::Accepted<String> {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![hello, show])
+    rocket::build().mount("/", routes![show])
 }
 
 #[cfg(test)]
 mod test {
     use super::rocket;
     use rocket::http::Status;
-
-    #[test]
-    fn test_hello() {
-        use rocket::local::blocking::Client;
-
-        let client = Client::tracked(rocket()).unwrap();
-        let response = client.get("/").dispatch();
-        assert_eq!(response.status(), Status::Ok);
-        assert_eq!(response.into_string(), Some("Hello, world!".into()));
-    }
 
     #[test]
     fn test_show() {
