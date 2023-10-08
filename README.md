@@ -4,6 +4,12 @@
 
 Minimal control software for the Vestargo display.
 
+Also contains a minimal board simulator to test your sequence
+
+```
+cargo run vestargo-simulator
+```
+
 ## Usage
 
 To control what is displayed change the content of the sequence.yaml file.
@@ -17,6 +23,8 @@ You can use the following templates in your sequence:
 ## Dynamic
 
 ### Text
+
+![Text](./screens/text.png)
 
 Displays given text, up to 6 lines of 22 characters.
 Colors are represented by the following characters:
@@ -43,6 +51,8 @@ Colors are represented by the following characters:
 
 ### Crypto
 
+![Crypto](./screens/crypto.png)
+
 Display the price of cryptocurrencies and 1 day change. Based on coingecko API.
 
 Supports up to 6 tickers.
@@ -67,6 +77,8 @@ Currently supported tickers:
 
 ### Rainbow
 
+![Rainbow](./screens/rainbow.png)
+
 Displays a rainbow.
 
 ```yaml
@@ -75,6 +87,8 @@ Displays a rainbow.
 ```
 
 ### Hearts
+
+![Hearts](./screens/hearts.png)
 
 Displays hearts.
 
