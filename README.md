@@ -88,6 +88,17 @@ Currently supported tickers:
     - Sol
 ```
 
+### Meteo
+
+![Meteo](./screens/meteo.png)
+
+Display the weather for Paris. Based on open-meteo API.
+
+```yaml
+- template: Meteo
+  duration: 5
+```
+
 ## Static
 
 ### Rainbow

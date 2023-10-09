@@ -1,9 +1,9 @@
-use num_traits::FromPrimitive;
-use rand::Rng;
 use crate::bit::Bit;
 use crate::bit::Color;
 use crate::bit::Message;
 use crate::template::Template;
+use num_traits::FromPrimitive;
+use rand::Rng;
 
 pub struct HappyText {
     pub text: Vec<String>,
@@ -41,7 +41,6 @@ impl Template for HappyText {
             message.rows[i].bits[0] = Bit::Color(Color::from_u8(rng.gen_range(63..=69)).unwrap());
             message.rows[i].bits[21] = Bit::Color(Color::from_u8(rng.gen_range(63..=69)).unwrap());
         }
-
 
         message
     }

@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::template::crypto_price::CryptoPrice;
 use crate::template::heart::Heart;
+use crate::template::meteo::Meteo;
 use crate::template::rainbow::Rainbow;
 use crate::template::text::Text;
 use crate::template::Template;
@@ -14,10 +15,8 @@ pub mod template;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::Client::new();
-
     let yaml = std::fs::read_to_string("sequence.yaml")?;
     let sequence: Sequence = serde_yaml::from_str(&yaml).unwrap();
-
     println!("{:?}", sequence);
 
     // No repeat is bugged for now
@@ -31,6 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Templates::HappyText => Box::new(crate::template::happy_text::HappyText::new(
                     step.text.clone().unwrap(),
                 )),
+                Templates::Meteo => Box::new(Meteo {}),
             };
             let message = template.render();
             let string_message = serde_json::to_string(&message)?;
@@ -66,6 +66,7 @@ enum Templates {
     Text,
     Crypto,
     HappyText,
+    Meteo,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

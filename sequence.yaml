@@ -1,5 +1,7 @@
 repeat: true
 steps:
+  - template: Meteo
+    duration: 5
   - template: HappyText
     duration: 5
     text:
